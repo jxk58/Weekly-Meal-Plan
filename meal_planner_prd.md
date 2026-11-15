@@ -2,10 +2,13 @@
 
 ## Weekly Meal Planner and Tracker
 
-**Status:** Draft v1.0\
+**Status:** Draft v1.1\
 **Product Type:** Personal-use household web application\
-**Platform:** Web\
-**Primary Stack:** Python, FastAPI, Jinja2, SQLAlchemy, PostgreSQL
+**Platform:** Web (desktop and mobile)\
+**Primary Stack:** Python, FastAPI, Jinja2, SQLAlchemy, PostgreSQL\
+**Hosting:** Vercel (application), Supabase (database)\
+**Code Repository:** Github\
+**Database Hosting:** Supabase
 
 ## 1. Product Overview
 
@@ -13,7 +16,7 @@
 
 Managing household meals, food inventory, expiration dates, and grocery
 shopping across spreadsheets creates friction when planning meals,
-tracking available ingredients, and deciding what to purchase.
+tracking available ingredients, and deciding what to purchase across desktop and mobile mediums.
 
 ### Product Vision
 
@@ -25,20 +28,16 @@ efficient.
 ### Product Goals
 
 -   Simplify weekly meal planning across breakfast, lunch, and dinner.
--   Maintain an accurate inventory of food across household storage
-    locations.
+-   Track food inventory by storage location.
 -   Track expiration dates to prioritize food that should be used soon.
 -   Organize grocery lists by designated stores.
+-   Is accessible between devices with an internet connection.
+-   Keep the initial experience straightforward and suitable for personal use.
 -   Establish a foundation for automated meal suggestions and grocery
     generation.
 
 ## 2. Target Users
-
-**Primary users:** Members of a shared household who coordinate meals,
-inventory, and grocery shopping.
-
-**Initial usage context:** Personal household management, with manual
-data entry and no external integrations required.
+The initial target user is an individual managing their household meals, food inventory, and grocery shopping. Multi-user household access may be considered in a later version.
 
 ## 3. Scope and Prioritization
 
@@ -175,6 +174,7 @@ lists.
 -   Display the current week's meal plan by default.
 -   Provide quick access to inventory items approaching expiration.
 -   Provide quick access to the grocery list.
+-   Keep navigation usable on desktop and mobile screens.
 
 **Acceptance criteria**
 
@@ -182,37 +182,29 @@ lists.
     saved data.
 -   The dashboard surfaces relevant expiration information when
     available.
+-   Core features remain accessible on a mobile browser.
 
-## 5. Future Functional Requirements
+### 4.5 User Access and Availability
 
-### 5.1 Recipe Management
+**Objective:** Make the application accessible across devices.
 
--   Save recipes with names, ingredients, quantities, units, and
-    preparation instructions.
--   Associate recipes with breakfast, lunch, or dinner.
--   Add saved recipes to the weekly meal planner.
--   Support editing reusable recipes without unexpectedly changing
-    previously planned meals.
+**Requirements**
 
-### 5.2 Inventory-Aware Meal Suggestions
+-   Host the application on Vercel.
+-   Make the application accessible through a public or private application URL.
+-   Support desktop and mobile browser layouts.
+-   Store application data independently of the hosting environment.
+-   Ensure application data persists when the application is redeployed or restarted.
+-   Protect database credentials and application secrets using environment variables.
 
--   Compare recipe ingredients against current inventory.
--   Identify recipes that use available ingredients.
--   Prioritize ingredients approaching expiration.
--   Indicate missing ingredients and allow users to select suggested
-    meals.
+**Acceptance criteria**
 
-### 5.3 Automated Grocery Generation
+-   Users can access the application from their phone and computer.
+-   Changes made on one device are reflected when accessing the application from another device.
+-   Application data remains available after redeployment.
+-   The application does not depend on a local computer remaining online.
 
--   Generate a draft grocery list from selected meal plans.
--   Compare required recipe ingredients against available inventory.
--   Calculate missing ingredient quantities when units are compatible.
--   Allow users to review, edit, and approve suggestions before adding
-    them to a grocery list.
--   Assign stores manually initially; consider automated store
-    preferences in a later version.
-
-## 6. Data Model
+## 5. Data Model
 
 The initial database should use the following core entities.
 
@@ -235,23 +227,27 @@ The initial database should use the following core entities.
 Future entities may include Recipe, RecipeIngredient, and
 RecipeMealPlanEntry.
 
-**Data considerations**
+**Data Requirements**
 
+-   Use Supabase PostgreSQL as the persistent database.
+-   Use SQLAlchemy to interact with PostgreSQL.
+-   Use Alembic to manage database schema changes.
+-   Configure a secure database connection using environment variables.
+-   Use Supabase connection pooling where appropriate for serverless deployment.
 -   Use unique IDs for records.
 -   Store dates in appropriate database date fields.
 -   Validate quantities and required fields.
 -   Define how inventory entries with duplicate item names are handled.
 -   Keep storage locations and meal types restricted to supported
     values.
--   Design recipe ingredients with units in mind before implementing
-    automated quantity calculations.
 
-## 7. Nonfunctional Requirements
+## 6. Nonfunctional Requirements
 
 -   **Usability:** Core tasks should be possible through straightforward
     forms and lists.
 -   **Persistence:** Data must survive page refreshes and application
     restarts.
+-   **Availability:** The application should remain accessible online without requiring a local computer to run.
 -   **Reliability:** Invalid input should produce clear errors rather
     than silently corrupting data.
 -   **Maintainability:** Keep routes, database models, templates, and
@@ -261,8 +257,9 @@ RecipeMealPlanEntry.
 -   **Responsive design:** Support desktop and mobile browser layouts.
 -   **Data integrity:** Prevent invalid dates, unsupported locations,
     and malformed quantities where applicable.
+-   **Scalability:** Maintain an architecture that supports additional features without requiring a complete rebuild. 
 
-## 8. Technical Architecture
+## 7. Technical Architecture
 
 ### Application stack
 
@@ -295,7 +292,7 @@ RecipeMealPlanEntry.
 -   `alembic/` --- database migrations
 -   `.env` --- local configuration, excluded from version control
 
-## 9. MVP Success Criteria
+## 8. MVP Success Criteria
 
 The initial product is successful when a user can:
 
@@ -312,7 +309,7 @@ Future success measures may include the time required to plan a week,
 the percentage of meals using existing inventory, and the frequency of
 unused or expired food.
 
-## 10. Risks and Open Questions
+## 9. Risks and Open Questions
 
 -   **Inventory accuracy:** Manually tracked quantities may become
     outdated.
@@ -328,7 +325,7 @@ unused or expired food.
 -   **Shopping workflow:** Purchased items may need to update inventory
     automatically in a later version.
 
-## 11. Implementation Roadmap
+## 9. Implementation Roadmap
 
 ### Phase 1 --- Foundation
 
