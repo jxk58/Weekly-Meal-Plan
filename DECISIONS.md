@@ -64,3 +64,15 @@ This file records decisions that clarify, change or go beyond [meal_planner_prd.
 **Decision:** Store dates in Postgres `date` columns, using Drizzle's string mode. Pass them through the app as `YYYY-MM-DD` strings, and do all date math with the helpers in `src/lib/dates.ts`. Weeks run Monday to Sunday. "Today" is computed per request in the `APP_TIME_ZONE` env var (an IANA zone, default `UTC`).
 
 **Consequences:** Set `APP_TIME_ZONE` in Vercel to the household's zone. Pages that depend on "today" render per request, inside `<Suspense>` with `connection()`. Timestamps for auditing, if ever needed, use `timestamptz` and are separate from these calendar dates.
+
+### D-004: Continuous integration with GitHub Actions for the Next.js app
+
+- **Date:** 2026-11-17
+- **Status:** Accepted
+- **PRD reference:** New (the PRD doesn't cover CI)
+
+**Context:** The checks in D-002 only run when someone remembers to run them locally. `main` must stay deployable, so PRs need an automatic gate.
+
+**Decision:** Add one workflow, `.github/workflows/ci.yml`, triggered on every pull request and on pushes to `main`. A single job sets up Node (`lts/*`, with the npm cache) and runs `npm ci`, then lint, format check, typecheck, tests and `next build`. The build is included because Cache Components and prerendering errors only show up there. Newer pushes to the same branch cancel older runs. The workflow token gets only `contents: read`. Actions are pinned to commit SHAs with the version tag in a comment.
+
+**Consequences:** CI must pass before a PR is merged. `npm ci` fails if `package-lock.json` is out of sync with `package.json`, so lockfile changes must be committed. When DB-backed tests arrive, add a Postgres service container to the same job (a placeholder comment marks the spot). Pinned action SHAs need occasional manual bumps.

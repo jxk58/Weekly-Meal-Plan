@@ -89,6 +89,8 @@ npm run db:generate    # drizzle-kit generate: SQL migration from schema changes
 npm run db:migrate     # apply migrations (uses MIGRATION_DATABASE_URL || DATABASE_URL)
 ```
 
+CI (`.github/workflows/ci.yml`, D-004) runs `npm ci`, lint, format check, typecheck, tests and `npm run build` on every pull request and every push to `main`. CI must pass before a PR is merged. If you change these scripts, update the workflow in the same change.
+
 Before you call a change done, `npm run check` and `npm run build` must both pass. For UI changes, also look at the page in a browser at desktop and phone widths.
 
 ## Database and migrations
