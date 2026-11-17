@@ -52,3 +52,15 @@ This file records decisions that clarify, change or go beyond [meal_planner_prd.
 **Decision:** Use `uv` for dependencies and virtual environments (`pyproject.toml` + `uv.lock`), `ruff` for linting and formatting, `mypy --strict` on `backend/app`, and `pytest` with FastAPI's `TestClient`. Target Python 3.12.
 
 **Consequences:** All commands run through `uv run` (see CLAUDE.md). `uv.lock` is committed.
+
+### D-003: Continuous integration with GitHub Actions
+
+- **Date:** 2026-11-16
+- **Status:** Accepted
+- **PRD reference:** New (the PRD doesn't cover CI)
+
+**Context:** The checks in CLAUDE.md (ruff, mypy, pytest) only ran when someone remembered to run them locally. `main` must stay deployable, so PRs need an automatic gate.
+
+**Decision:** Add one GitHub Actions workflow, `.github/workflows/ci.yml`, triggered on every pull request and on pushes to `main`. A single job installs dependencies with `astral-sh/setup-uv` (cache enabled, Python from `.python-version`) and `uv sync --locked`, then runs `ruff check`, `ruff format --check`, `mypy backend/app index.py` and `pytest`. Newer pushes to the same branch cancel older runs. The workflow token gets only `contents: read`. Third-party actions are pinned to commit SHAs with the version tag in a comment.
+
+**Consequences:** CI must be green before a PR is merged. `uv sync --locked` fails if `uv.lock` is out of date with `pyproject.toml`, so lockfile changes must be committed. When DB-backed tests arrive, add a Postgres service container to the same job (a placeholder comment marks the spot) rather than a separate workflow. Pinned action SHAs need occasional manual bumps.

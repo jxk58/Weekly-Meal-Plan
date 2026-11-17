@@ -33,6 +33,7 @@ Don't add new frameworks (a SPA, a CSS framework, another ORM, a task queue) wit
 The code is split into `backend/` (Python) and `frontend/` (templates and assets), but it's still **one FastAPI app with one deploy**. The backend renders the frontend's templates. See D-001.
 
 ```
+.github/workflows/   # ci.yml: lint, type-check and tests on every PR
 pyproject.toml       # deps + ruff/mypy/pytest config + [tool.vercel] entrypoint
 index.py             # Vercel entrypoint: adds backend/ to sys.path, re-exports app
 vercel.json          # excludes tests/migrations/docs from the function bundle
@@ -84,12 +85,14 @@ uv sync                                   # install deps (uv fetches Python 3.12
 uv run uvicorn app.main:app --reload --app-dir backend   # http://127.0.0.1:8000
 uv run pytest                             # tests
 uv run ruff check . && uv run ruff format --check .
-uv run mypy backend/app
+uv run mypy backend/app index.py
 uv run alembic revision --autogenerate -m "describe change"
 uv run alembic upgrade head
 ```
 
 Before you call a change done, run ruff, mypy and pytest and confirm they pass.
+
+CI (`.github/workflows/ci.yml`, see D-003) runs the same checks (`uv sync --locked`, ruff check, ruff format --check, mypy, pytest) on every pull request and on every push to `main`. CI must be green before a PR is merged. If you change these commands, update the workflow in the same change.
 
 ## Database and migrations
 
