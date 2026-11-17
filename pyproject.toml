@@ -28,6 +28,10 @@ dev = [
 # Application, not a library: install dependencies only, don't build/install the project itself.
 package = false
 
+[tool.vercel]
+# Root index.py puts backend/ on sys.path and re-exports app.main:app.
+entrypoint = "index:app"
+
 [tool.pytest.ini_options]
 pythonpath = ["backend"]
 testpaths = ["backend/tests"]
