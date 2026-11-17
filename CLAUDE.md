@@ -101,7 +101,7 @@ Before you call a change done, `npm run check` and `npm run build` must both pas
 
 ## Deployment (Vercel)
 
-- `vercel.json` pins `"framework": "nextjs"`, so the build settings live in the repo rather than the dashboard (the project was first created with a static/"Other" preset). Don't set an output directory: Vercel handles `.next` itself. The Node version comes from `engines` in `package.json`.
+- The Vercel project's Framework Preset is set to Next.js in the dashboard; there is no `vercel.json`. Don't override the output directory, because Vercel handles `.next` itself. The Node version comes from `engines` in `package.json`.
 - Set `DATABASE_URL` (the pooled URL) and `APP_TIME_ZONE` in the Vercel project's environment variables, separately for Preview and Production.
 - Keep the deployment private (Vercel Deployment Protection, or app-level auth) until access control is decided. The repo is public, so the deployed app must not be.
 
