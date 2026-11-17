@@ -10,7 +10,7 @@ Weekly Meal Planner and Tracker: a personal-use household web app for weekly mea
 
 - **Requirements baseline:** [meal_planner_prd.md](meal_planner_prd.md). Read the relevant section before building a feature. Don't edit the PRD to record new decisions.
 - **Decisions log:** [DECISIONS.md](DECISIONS.md) records every decision that clarifies, changes or goes beyond the PRD (for example, how duplicate inventory names are handled). Add an entry in the same change that implements the decision. Entries are append-only: to reverse a decision, add a new entry that supersedes the old one and mark the old one `Superseded by D-NNN`. Don't rewrite or delete history.
-- **Precedence:** where the two conflict, the latest accepted entry in DECISIONS.md wins over the PRD. The tech stack in particular comes from D-004 to D-006, not from PRD §7. Check the log before relying on a PRD detail.
+- **Precedence:** where the two conflict, the latest accepted entry in DECISIONS.md wins over the PRD. The tech stack in particular comes from D-001 to D-003, not from PRD §7. Check the log before relying on a PRD detail.
 - **Status:** Phase 1 scaffolding. The app shell, placeholder pages, the database client and tests are in place. No tables or CRUD yet. Update this file when the structure or commands change.
 
 ## Stack
@@ -63,7 +63,7 @@ Tests sit next to the code they cover, as `*.test.ts` or `*.test.tsx`.
 ## Domain rules (from the PRD and DECISIONS.md)
 
 - Meal types: `breakfast`, `lunch`, `dinner`. Storage locations: `fridge`, `freezer`, `pantry`, `counter`. They're defined once in `src/lib/domain.ts`, enforced in Postgres with `pgEnum`s, and checked in forms with `z.enum`.
-- **Dates are calendar dates, never instants** (D-006):
+- **Dates are calendar dates, never instants** (D-003):
   - Store them in Postgres `date` columns (Drizzle `mode: "string"`) and pass them around as `YYYY-MM-DD` strings.
   - Use the helpers in `src/lib/dates.ts`, never `new Date(...)` arithmetic.
   - "Today" is `todayIn(getEnv().APP_TIME_ZONE)`.
