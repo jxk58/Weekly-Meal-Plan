@@ -9,7 +9,7 @@ Weekly Meal Planner and Tracker: a personal-use household web app for weekly mea
 - **Requirements baseline:** [meal_planner_prd.md](meal_planner_prd.md). Read the relevant section before building a feature. Don't edit the PRD to record new decisions.
 - **Decisions log:** [DECISIONS.md](DECISIONS.md) records every decision that clarifies, changes or goes beyond the PRD (for example, how duplicate inventory names are handled). Add an entry in the same change that implements the decision. Entries are append-only: to reverse a decision, add a new entry that supersedes the old one and mark the old one `Superseded by D-NNN`. Don't rewrite or delete history.
 - **Precedence:** where the two conflict, the latest accepted entry in DECISIONS.md wins over the PRD. Check the log before relying on a PRD detail.
-- **Status:** greenfield. The repo has only the PRD so far, so the structure and commands below are the target setup. Update this file when reality differs.
+- **Status:** Phase 1 scaffolding. The app skeleton, page routes, base templates, Alembic and tests are in place. No models or CRUD yet. Update this file when the structure or commands change.
 
 ## Stack
 
@@ -17,7 +17,7 @@ Weekly Meal Planner and Tracker: a personal-use household web app for weekly mea
 |---|---|
 | Language | Python 3.12+ |
 | Web framework | FastAPI |
-| Templates / UI | Jinja2, HTML, CSS, minimal vanilla JS (server-rendered, form-based) |
+| Templates / UI | Jinja2, HTML, CSS, HTMX for partial-page updates, minimal vanilla JS (server-rendered, form-based) |
 | ORM | SQLAlchemy 2.x (typed `Mapped[...]` / `mapped_column` style) |
 | Migrations | Alembic |
 | Validation | Pydantic v2 |
@@ -30,20 +30,32 @@ Don't add new frameworks (a SPA, a CSS framework, another ORM, a task queue) wit
 
 ## Layout
 
+The code is split into `backend/` (Python) and `frontend/` (templates and assets), but it's still **one FastAPI app with one deploy**. The backend renders the frontend's templates. See D-001.
+
 ```
-app/
-  main.py          # app factory, router registration, static/template mounting
-  config.py        # Settings (pydantic-settings); the only place env vars are read
-  db.py            # engine, sessionmaker, get_db dependency
-  models/          # SQLAlchemy models, one module per entity
-  schemas/         # Pydantic input/output schemas
-  services/        # business logic; plain functions that take a Session
-  routers/         # thin FastAPI routes: meals, inventory, grocery, dashboard
-  templates/       # Jinja2; base.html holds shared nav, one folder per section
-  static/          # css/, js/
-alembic/           # migrations (env.py imports app.models metadata)
-tests/             # mirrors app/: tests/services, tests/routers
+pyproject.toml       # deps + ruff/mypy/pytest config (repo root)
+alembic.ini          # points at backend/alembic
+backend/
+  app/
+    main.py          # app factory, router registration, static mount
+    config.py        # Settings + paths; the only place env vars are read
+    db.py            # engine, sessionmaker, get_db dependency
+    templating.py    # shared Jinja2Templates pointed at frontend/templates
+    models/          # SQLAlchemy models, one module per entity; enums.py
+    schemas/         # Pydantic input schemas
+    services/        # business logic; plain functions that take a Session
+    routers/         # thin routes: dashboard, meals, inventory, grocery, health
+  alembic/           # migrations (env.py imports app.models metadata)
+  tests/             # mirrors app/: tests/services, tests/routers
+frontend/
+  templates/         # base.html (shared nav), one folder per section
+    partials/        # fragments returned to HTMX requests
+  static/            # css/, js/
 ```
+
+- The importable package is `app` (`backend/` is on the path via pytest/mypy/alembic config and `--app-dir`). Import as `from app.services import ...`, never `backend.app`.
+- Backend code finds frontend files only through the path constants in `app/config.py`.
+- HTMX endpoints return a template from `frontend/templates/partials/`. Full pages `{% include %}` the same partial, so markup isn't duplicated.
 
 ### Layering rules
 
@@ -66,11 +78,11 @@ tests/             # mirrors app/: tests/services, tests/routers
 ## Commands
 
 ```bash
-uv sync                                   # install deps
-uv run uvicorn app.main:app --reload      # run locally at http://127.0.0.1:8000
+uv sync                                   # install deps (uv fetches Python 3.12 if needed)
+uv run uvicorn app.main:app --reload --app-dir backend   # http://127.0.0.1:8000
 uv run pytest                             # tests
 uv run ruff check . && uv run ruff format --check .
-uv run mypy app
+uv run mypy backend/app
 uv run alembic revision --autogenerate -m "describe change"
 uv run alembic upgrade head
 ```

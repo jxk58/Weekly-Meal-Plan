@@ -29,4 +29,26 @@ This file records decisions that clarify, change or go beyond [meal_planner_prd.
 
 ## Decisions
 
-_No decisions recorded yet._
+### D-001: Server-rendered Jinja + HTMX, split into backend/ and frontend/ folders
+
+- **Date:** 2026-11-16
+- **Status:** Accepted
+- **PRD reference:** §7 (Technical Architecture, Initial application structure)
+
+**Context:** The PRD's §7 puts everything under one `app/` folder, with templates and static files inside it. We wanted the frontend and backend code visibly separated. We also considered a separate SPA frontend calling a JSON API.
+
+**Decision:** Keep the PRD's server-rendered architecture: FastAPI renders Jinja2 templates, and HTMX handles partial-page updates such as checking off a grocery item. Python code lives in `backend/` (the package is still `app`, as in `backend/app/...`). Templates and CSS/JS live in `frontend/`. It stays one app and one deploy. A separate SPA was rejected for now because a single-user CRUD app doesn't need its extra toolchain, its second deployment, or the API contract it would have to keep in sync.
+
+**Consequences:** The structure in §7 maps onto `backend/app/` (code) and `frontend/` (`templates/`, `static/`). HTMX is loaded from a CDN pinned to an exact version. If a SPA or native client is ever needed, add JSON routes on top of the existing services.
+
+### D-002: Python tooling: uv, ruff, mypy, pytest
+
+- **Date:** 2026-11-16
+- **Status:** Accepted
+- **PRD reference:** New (the PRD doesn't specify tooling)
+
+**Context:** The PRD names the runtime stack but not the development tooling.
+
+**Decision:** Use `uv` for dependencies and virtual environments (`pyproject.toml` + `uv.lock`), `ruff` for linting and formatting, `mypy --strict` on `backend/app`, and `pytest` with FastAPI's `TestClient`. Target Python 3.12.
+
+**Consequences:** All commands run through `uv run` (see CLAUDE.md). `uv.lock` is committed.

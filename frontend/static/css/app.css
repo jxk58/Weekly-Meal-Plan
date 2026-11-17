@@ -1,0 +1,97 @@
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --text: #1f2328;
+  --muted: #656d76;
+  --border: #d8dee4;
+  --accent: #2f6f4f;
+  --radius: 10px;
+  --gap: 1rem;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161a1d;
+    --surface: #1f2428;
+    --text: #e6edf3;
+    --muted: #9198a1;
+    --border: #30363d;
+    --accent: #6fbf8f;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--accent); }
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { font-weight: 700; text-decoration: none; color: var(--text); }
+
+.site-nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+
+.site-nav a {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--muted);
+}
+
+.site-nav a[aria-current="page"] {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.week-nav { display: flex; gap: 0.75rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: var(--gap);
+}
+
+.card h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+
+.week-grid {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.week-grid .card { margin-bottom: 0; }
+
+.slot h3 { margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; }
+
+.muted { color: var(--muted); font-weight: 400; }
+
+.empty { color: var(--muted); margin: 0.25rem 0; }

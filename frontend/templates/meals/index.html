@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Meals{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Week of {{ days[0].strftime('%b %d, %Y') }}</h1>
+  <div class="week-nav">
+    <a href="{{ url_for('meal_plan') }}?week={{ prev_week.isoformat() }}">&larr; Prev</a>
+    <a href="{{ url_for('meal_plan') }}">Today</a>
+    <a href="{{ url_for('meal_plan') }}?week={{ next_week.isoformat() }}">Next &rarr;</a>
+  </div>
+</div>
+
+<div class="week-grid">
+  {% for day in days %}
+  <section class="card day">
+    <h2>{{ day.strftime('%a') }} <span class="muted">{{ day.strftime('%m/%d') }}</span></h2>
+    {% for meal_type in meal_types %}
+    <div class="slot">
+      <h3>{{ meal_type.value | capitalize }}</h3>
+      <p class="empty">No meal</p>
+    </div>
+    {% endfor %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>This week</h1>
+
+<section class="card">
+  <h2>Meal plan</h2>
+  <p class="empty">No meals planned yet. <a href="{{ url_for('meal_plan') }}">Plan this week</a></p>
+</section>
+
+<section class="card">
+  <h2>Expiring soon</h2>
+  <p class="empty">Nothing expiring soon. <a href="{{ url_for('inventory') }}">View inventory</a></p>
+</section>
+
+<section class="card">
+  <h2>Grocery list</h2>
+  <p class="empty">Your grocery list is empty. <a href="{{ url_for('grocery_list') }}">Open grocery list</a></p>
+</section>
+{% endblock %}

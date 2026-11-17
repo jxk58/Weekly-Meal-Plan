@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<h1>Inventory</h1>
+
+{% for location in locations %}
+<section class="card">
+  <h2>{{ location.value | capitalize }}</h2>
+  <p class="empty">No items.</p>
+</section>
+{% endfor %}
+{% endblock %}
