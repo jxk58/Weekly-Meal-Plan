@@ -1,0 +1,7 @@
+.next/
+node_modules/
+drizzle/meta/
+package-lock.json
+next-env.d.ts
+AGENTS.md
+meal_planner_prd.md
